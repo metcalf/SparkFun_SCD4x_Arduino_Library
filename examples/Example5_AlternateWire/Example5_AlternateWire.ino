@@ -27,19 +27,37 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println(F("SCD4x Example"));
-  
-  Wire1.begin(); // In this example, let's use Wire1 instead of Wire
 
   //mySensor.enableDebugging(); // Uncomment this line to get helpful debug messages on Serial
-  
+
   //mySensor.enableDebugging(Serial1); // Uncomment this line instead to get helpful debug messages on Serial1
 
-  if (mySensor.begin(Wire1) == false) // .begin the sensor on Wire1 instead of Wire
-  {
-    Serial.println(F("Sensor not detected. Please check wiring. Freezing..."));
-    while (1)
-      ;
-  }
+
+  // In this example, let's use Wire1 instead of Wire on Arduino
+  // Since not all Particle boards have a Wire1, use Wire so tests will pass.
+  #ifndef PLATFORM_ID
+    Wire1.begin();
+
+    if (mySensor.begin(Wire1) == false) // .begin the sensor on Wire1 instead of Wire
+    {
+      Serial.println(F("Sensor not detected. Please check wiring. Freezing..."));
+      while (1)
+        ;
+    }
+  #else
+    Wire.begin();
+
+    if (mySensor.begin(Wire) == false) // .begin the sensor on Wire1 instead of Wire
+    {
+      Serial.println(F("Sensor not detected. Please check wiring. Freezing..."));
+      while (1)
+        ;
+    }
+  #endif
+
+
+
+
 }
 
 void loop()
